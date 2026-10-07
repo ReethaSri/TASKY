@@ -1,0 +1,10 @@
+ Folder is created for: 
+1. Backend 
+2. Frontend 
+3. Database 
+4. README.md 
+5. .gitignore 
+ Prototype of the project based on the teammates idea has been 
+made  
+ Frontend idea has been finalized  
+ Title of the web had been decided (TASKY) 

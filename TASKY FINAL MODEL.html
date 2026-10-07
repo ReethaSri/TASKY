@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tasky</title><link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>📅</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f1ff;--bg2:#ffeef6;--card:rgba(255,255,255,.75);--solid:#fff;--ink:#2a2540;--muted:#7a7592;--line:rgba(120,100,180,.16);--a:#7c5cff;--a2:#ff7eb6;--ok:#22c58b;--bad:#ef4565;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14112a;--bg2:#2a1535;--card:rgba(40,34,70,.75);--solid:#272142;--ink:#efeaff;--muted:#a59fc4;--line:rgba(180,160,255,.18)}}
+:root[data-theme="dark"]{--bg:#14112a;--bg2:#2a1535;--card:rgba(40,34,70,.75);--solid:#272142;--ink:#efeaff;--muted:#a59fc4;--line:rgba(180,160,255,.18)}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Poppins,system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg),var(--bg2)) fixed;min-height:100vh}
+.hidden{display:none!important}h2,h3{margin:0 0 8px}h3{font-size:15px;margin-top:20px}small{color:var(--muted)}
+.logo{font-weight:700;font-size:24px;background:linear-gradient(90deg,var(--a),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--solid);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--a)}label{font-size:12px;color:var(--muted)}
+.btn{background:linear-gradient(90deg,var(--a),var(--a2));color:#fff;border:0;border-radius:12px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sm{padding:5px 12px;font-size:12px}.btn.ghost{background:var(--solid);color:var(--bad);border:1px solid var(--line)}
+.icon{border:1px solid var(--line);background:var(--solid);color:var(--ink);border-radius:12px;width:38px;height:38px;cursor:pointer;font-size:16px;position:relative}
+.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px}
+.gl,.panel,.task,.stat,.hero{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:20px;box-shadow:0 8px 30px rgba(124,92,255,.08)}
+.gl{padding:34px;width:min(380px,100%);display:flex;flex-direction:column;gap:14px;text-align:center}.gl .logo{font-size:40px}
+#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{padding:22px 16px;display:flex;flex-direction:column;gap:18px;border-right:1px solid var(--line);background:var(--card);backdrop-filter:blur(14px);position:sticky;top:0;height:100vh}
+#nav{display:flex;flex-direction:column;gap:4px;flex:1}
+#nav button,.out{border:0;background:none;color:var(--muted);font:inherit;text-align:left;padding:10px 14px;border-radius:12px;cursor:pointer}
+#nav button.on{background:linear-gradient(90deg,var(--a),var(--a2));color:#fff;font-weight:600}.out{color:var(--bad)}
+.main{padding:22px 28px;max-width:960px;width:100%}
+header{display:flex;align-items:center;gap:12px;margin-bottom:18px}header h1{flex:1;margin:0;font-size:22px}
+.bellw{position:relative}.bc{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;font-size:10px;border-radius:99px;padding:1px 6px}
+.drop{position:absolute;right:0;top:46px;width:280px;background:var(--solid);border:1px solid var(--line);border-radius:16px;padding:6px;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.di{padding:10px;border-radius:10px;cursor:pointer;display:flex;flex-direction:column}.di:hover{background:var(--line)}
+.uc{display:flex;align-items:center;gap:8px;cursor:pointer}
+.av{width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.hero{padding:24px;background:linear-gradient(120deg,rgba(124,92,255,.18),rgba(255,126,182,.18));margin-bottom:16px}.hero h2{font-size:22px}.hero p{margin:0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:16px;text-align:center;cursor:pointer;color:var(--muted);font-size:12px}.stat b{display:block;font-size:28px;color:var(--a)}
+.task{display:flex;gap:12px;padding:14px 16px;margin-bottom:10px;border-left:5px solid #f5a524;justify-content:space-between}
+.task.HIGH{border-left-color:var(--bad)}.task.LOW{border-left-color:var(--ok)}.task small{display:block}.task p{margin:4px 0 0;color:var(--muted)}.task .note{font-style:italic}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;white-space:nowrap}
+.pill{font-size:11px;padding:3px 10px;border-radius:99px;background:rgba(124,92,255,.14);color:var(--a);font-weight:600}.pill.bad{background:rgba(239,69,101,.15);color:var(--bad)}.pill.ok{background:rgba(34,197,139,.16);color:var(--ok)}
+.panel{padding:20px;margin-bottom:16px}.grid{display:flex;flex-direction:column;gap:10px}.row{display:flex;gap:10px}
+.pro{display:flex;gap:16px;align-items:center}.pro .av{width:60px;height:60px;font-size:26px}
+.empty{padding:26px;text-align:center;color:var(--muted)}.bar{display:flex;align-items:center;gap:12px;margin-bottom:10px}.bar h3{margin:0;min-width:170px;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dow{text-align:center;font-size:12px;color:var(--muted)}
+.cell{min-height:86px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;overflow:hidden}
+.cell span{font-size:12px;font-weight:600}.cell.o{opacity:.4}.cell.t{outline:2px solid var(--a)}.cell.s{background:rgba(124,92,255,.18)}.cell em{font-size:11px;color:var(--muted)}
+.chip{display:block;font-style:normal;font-size:10px;padding:2px 5px;margin-top:3px;border-radius:6px;background:var(--solid);border-left:3px solid #f5a524;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.HIGH{border-color:var(--bad)}.chip.LOW{border-color:var(--ok)}.chip.SUBMITTED{opacity:.5;text-decoration:line-through}
+.modal{position:fixed;inset:0;background:rgba(20,16,40,.5);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}.modal .gl{text-align:left}
+#toasts{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:20}
+.toast{background:var(--a);color:#fff;padding:12px 16px;border-radius:14px;max-width:300px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}.toast.bad{background:var(--bad)}
+.tabs{display:flex;gap:4px;background:var(--solid);padding:4px;border-radius:14px}.tabs button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:12px;padding:8px 4px;border-radius:10px;cursor:pointer}.tabs button.on{background:linear-gradient(90deg,var(--a),var(--a2));color:#fff;font-weight:600}
+#lf{text-align:left}img.av{object-fit:cover;display:block}.pro .av.big{width:72px;height:72px;font-size:30px}
+.dev{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}.dev small{display:block}
+.code{font-size:32px;font-weight:700;letter-spacing:8px;text-align:center;padding:12px;background:var(--solid);border-radius:14px;margin:10px 0;color:var(--a)}
+@media(max-width:800px){#app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;align-items:center;overflow-x:auto;padding:10px}#nav{flex-direction:row;flex:none}#nav button,.out{white-space:nowrap}.main{padding:16px}.stats{grid-template-columns:1fr 1fr}.cell{min-height:60px}.chip{display:none}.uc b{display:none}}
+</style></head><body>
+<div id="login" class="login hidden"><div class="gl"><div class="logo">Tasky</div><p>Plan. Assign. Finish. ✨<br><small>Preview: create an account with any details. Data stays in your browser.</small></p>
+<div class="tabs" id="lt"><button data-lt="in">Sign in</button><button data-lt="up">Create account</button><button data-lt="code">Link code</button></div>
+<form id="lf" class="grid"></form></div></div>
+<div id="app" class="hidden">
+<aside><div class="logo">Tasky</div><nav id="nav"></nav><button class="out" id="lo">↩ Logout</button></aside>
+<div class="main"><header><h1 id="ttl"></h1>
+<div class="bellw"><button class="icon" id="bb">🔔<span id="bc" class="bc hidden">0</span></button><div id="drop" class="drop hidden"></div></div>
+<div class="uc" id="uc"></div></header><div id="page"></div></div></div>
+<div id="modal" class="modal hidden"><div class="gl"><h3 id="mt" style="margin:0"></h3><small>Add a note or link for your submission</small>
+<textarea id="mn" rows="3" placeholder="Submission note (optional)"></textarea>
+<div class="row"><button class="btn" id="ms">Submit task</button><button class="btn ghost" id="mc">Cancel</button></div></div></div>
+<div id="toasts"></div>
+<script>
+const $=s=>document.querySelector(s);
+const mem={},store={get:k=>{try{return localStorage.getItem(k)}catch{return mem[k]||null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{mem[k]=v}},del:k=>{try{localStorage.removeItem(k)}catch{delete mem[k]}}};
+let dev=store.get('tasky_dev');if(!dev){dev=Math.random().toString(36).slice(2)+Date.now().toString(36);store.set('tasky_dev',dev)}
+let me=null,tasks=[],users=[],page='home',cal=new Date(),mon=new Date(),sel=null,subId=null;const shown=new Set();
+const pad=n=>String(n).padStart(2,'0'),ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/*API*/
+let D;const ld=()=>{if(D)return D;try{D=JSON.parse(store.get('tk_db2'))}catch{}return D||(D={u:{},t:[],n:1,dv:[],codes:{}})},sv=()=>store.set('tk_db2',JSON.stringify(D));
+const iso=(n,h,m=0)=>{const x=new Date();x.setDate(x.getDate()+n);return `${ymd(x)}T${pad(h)}:${pad(m)}`};
+function seed(d,n){const mk=(t,ds,by,due,p,st,note)=>d.t.push({id:d.n++,title:t,description:ds,assignedTo:n,assignedBy:by,due,priority:p,remindMins:30,status:st||'PENDING',note:note||'',submittedAt:st?iso(0,8)+':00':''});
+mk('Data structures assignment','Linked list problems','Prof. Rao',iso(1,10),'HIGH');mk('Digital electronics lab record','Experiments 4-6','Prof. Mehta',iso(3,14),'MEDIUM');mk('Java project review','Push code to repo','Ravi',iso(0,23,30),'MEDIUM');mk('Architecture quiz prep','Pipelining chapter','Prof. Rao',iso(6,9),'LOW');mk('Python worksheet','','Prof. Rao',iso(-2,17),'MEDIUM','SUBMITTED','Uploaded to portal');mk('Missed lab notes','','Ravi',iso(-1,9),'HIGH')}
+const H=s=>[...String(s)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7).toString(36);const nowS=()=>new Date().toISOString().slice(0,19),blank=n=>({name:n,email:'',phone:'',age:null,bio:'',color:'#7c5cff',avatar:'',hasPassword:false,pwh:'',joined:ymd(new Date())});
+async function api(path,method='GET',b){const d=ld(),n=me?me.name:'',lc=s=>String(s).toLowerCase(),P=path,find=k=>Object.values(d.u).find(x=>lc(x.name)===lc(k)||(x.email&&lc(x.email)===lc(k))||(x.phone&&String(k).replace(/\D/g,'')&&x.phone.replace(/\D/g,'')===String(k).replace(/\D/g,'')));
+if(P==='/api/login'){let u;
+if(b.mode==='resume'){u=find(b.name);if(!u||!d.dv.some(x=>x.id===dev&&lc(x.user)===lc(u.name)))throw new Error('Please sign in')}
+else if(b.mode==='code'){const c=d.codes[b.code];if(!c||c.exp<Date.now())throw new Error('Invalid or expired code');u=find(c.user);delete d.codes[b.code]}
+else if(b.mode==='up'){if(b.password&&b.password.length<6)throw new Error('Password must be at least 6 characters');if(!b.name||!b.email||!b.phone||!b.age)throw new Error('Name, email, phone and age are all required');if(find(b.name)||find(b.email))throw new Error('That name or email is already registered. Sign in instead.');u=d.u[b.name]=Object.assign(blank(b.name),{email:b.email,phone:b.phone,age:+b.age});if(b.password){u.pwh=H(b.password);u.hasPassword=true}if(Object.keys(d.u).length===1){seed(d,b.name);d.dv.push({id:'demo-phone',user:b.name,label:'Safari on iOS',linked:ymd(new Date(Date.now()-5*864e5)),seen:iso(-1,20)+':00'})}}
+else{u=find(b.id);if(!u)throw new Error('No account found. Create one first.');if(u.pwh&&u.pwh!==H(b.password||''))throw new Error('Wrong password')}
+const e=d.dv.find(x=>x.id===dev);if(e)e.seen=nowS();else d.dv.push({id:dev,user:u.name,label:b.label,linked:ymd(new Date()),seen:nowS()});sv();return u}
+if(P==='/api/me'){const u=d.u[n];if(b.name&&lc(b.name)!==lc(n)&&find(b.name))throw new Error('That name is taken');if(b.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email))throw new Error('Enter a valid email address');delete d.u[n];Object.assign(u,b,{age:'age' in b?(b.age?+b.age:null):u.age});d.u[u.name]=u;d.t.forEach(t=>{if(t.assignedTo===n)t.assignedTo=u.name;if(t.assignedBy===n)t.assignedBy=u.name});d.dv.forEach(x=>{if(x.user===n)x.user=u.name});sv();return u}
+if(P==='/api/password'){const u=d.u[n];if(u.pwh&&u.pwh!==H(b.current||''))throw new Error('Current password is wrong');if(b.new&&b.new.length<6)throw new Error('Password must be at least 6 characters');u.pwh=b.new?H(b.new):'';u.hasPassword=!!b.new;sv();return{hasPassword:u.hasPassword}}
+if(P==='/api/devices'&&method==='GET')return d.dv.filter(x=>x.user===n).sort((a,b)=>b.seen.localeCompare(a.seen));
+if(P==='/api/devices/code'){const c=String(Math.floor(Math.random()*1e6)).padStart(6,'0');d.codes[c]={user:n,exp:Date.now()+6e5};sv();return{code:c,minutes:10}}
+let r=P.match(/^\/api\/devices\/(.+)$/);if(r&&method==='DELETE'){d.dv=d.dv.filter(x=>x.id!==r[1]);sv();return{ok:true}}
+if(P==='/api/users')return Object.keys(d.u);
+if(P==='/api/tasks'&&method==='GET')return d.t.filter(t=>lc(t.assignedTo)===lc(n)||lc(t.assignedBy)===lc(n)).sort((a,b)=>a.due.localeCompare(b.due));
+if(P==='/api/tasks'){const t={id:d.n++,title:b.title,description:b.description||'',assignedTo:b.assignedTo,assignedBy:n,due:b.due,priority:b.priority,remindMins:+b.remindMins||30,status:'PENDING',note:'',submittedAt:''};if(!find(t.assignedTo))d.u[t.assignedTo]=blank(t.assignedTo);d.t.push(t);sv();return t}
+r=P.match(/^\/api\/tasks\/(\d+)\/submit$/);if(r){const t=d.t.find(x=>x.id==r[1]);t.status='SUBMITTED';t.note=b.note||'';t.submittedAt=nowS();sv();return{ok:true}}
+r=P.match(/^\/api\/tasks\/(\d+)$/);if(r){d.t=d.t.filter(x=>x.id!=r[1]);sv();return{ok:true}}throw new Error('Not found')}
+/*END*/
+const av=(u,c='')=>u.avatar?`<img class="av ${c}" src="${u.avatar}" alt="">`:`<div class="av ${c}" style="background:${u.color}">${esc(u.name[0].toUpperCase())}</div>`;
+const mine=t=>t.assignedTo.toLowerCase()===me.name.toLowerCase(),byMe=t=>t.assignedBy.toLowerCase()===me.name.toLowerCase();
+const late=t=>t.status==='PENDING'&&new Date(t.due)<new Date();
+const left=t=>{const m=Math.round((new Date(t.due)-new Date())/6e4);return m<0?'Overdue':m<60?m+'m left':m<1440?Math.floor(m/60)+'h left':Math.floor(m/1440)+'d left'};
+const due=()=>tasks.filter(t=>mine(t)&&t.status==='PENDING'&&new Date(new Date(t.due)-t.remindMins*6e4)<new Date());
+const card=t=>`<div class="task ${t.priority}"><div><b>${esc(t.title)}</b><small>${mine(t)?'from '+esc(t.assignedBy):'to '+esc(t.assignedTo)} · ${t.due.replace('T',' ')}</small>${t.description?`<p>${esc(t.description)}</p>`:''}${t.note?`<p class="note">“${esc(t.note)}”</p>`:''}</div><div class="side"><span class="pill ${t.status==='SUBMITTED'?'ok':late(t)?'bad':''}">${t.status==='SUBMITTED'?'Done':left(t)}</span>${t.status==='PENDING'&&mine(t)?`<button class="btn sm" data-sub="${t.id}">Submit</button>`:''}${byMe(t)?`<button class="btn sm ghost" data-del="${t.id}">Delete</button>`:''}</div></div>`;
+const nav=(d,k)=>`<div class="bar"><button class="icon" data-mv="${k}:-1">‹</button><h3>${d.toLocaleDateString(undefined,{month:'long',year:'numeric'})}</h3><button class="icon" data-mv="${k}:1">›</button></div>`;
+const stats=()=>{const m=tasks.filter(mine),mo=ymd(new Date()).slice(0,7),td=ymd(new Date());return{p:m.filter(t=>t.status==='PENDING').length,d:m.filter(t=>t.status==='SUBMITTED'&&t.submittedAt.startsWith(mo)).length,t:m.filter(t=>t.status==='PENDING'&&t.due.startsWith(td)).length,l:m.filter(late).length}};
+const NAV=[['home','🏠','Home'],['assign','✨','Assign Task'],['pending','⏳','Pending'],['done','✅','Completed'],['deadlines','⏰','Deadlines'],['calendar','📅','Calendar'],['profile','👤','Profile']];
+const pages={
+home:()=>{const s=stats(),up=tasks.filter(t=>mine(t)&&t.status==='PENDING').slice(0,4);return `<div class="hero"><h2>Hello, ${esc(me.name)} 👋</h2><p>${s.p?`You have ${s.p} pending task${s.p>1?'s':''}.`:'You are all caught up!'}</p></div><div class="stats">${[['Pending',s.p,'pending'],['Done this month',s.d,'done'],['Due today',s.t,'deadlines'],['Overdue',s.l,'deadlines']].map(([l,n,g])=>`<div class="stat" data-go="${g}"><b>${n}</b>${l}</div>`).join('')}</div><h3>Next deadlines</h3>${up.map(card).join('')||'<div class="empty">Nothing due. Assign a task to get started.</div>'}`},
+assign:()=>`<form id="af" class="panel grid"><input name="title" placeholder="Task title" required><textarea name="description" rows="3" placeholder="Details (optional)"></textarea><input name="assignedTo" list="ul" placeholder="Assign to (name)" required><datalist id="ul">${users.map(u=>`<option value="${esc(u)}">`).join('')}</datalist><label>Deadline<input type="datetime-local" name="due" required></label><div class="row"><select name="priority"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option></select><select name="remindMins"><option value="10">Remind 10 min before</option><option value="30" selected>Remind 30 min before</option><option value="60">Remind 1 hour before</option><option value="1440">Remind 1 day before</option></select></div><button class="btn">Assign task</button></form><h3>Assigned by me</h3>${tasks.filter(byMe).map(card).join('')||'<div class="empty">No tasks assigned yet.</div>'}`,
+pending:()=>tasks.filter(t=>mine(t)&&t.status==='PENDING').map(card).join('')||'<div class="empty">No pending tasks 🎉</div>',
+done:()=>{const k=`${mon.getFullYear()}-${pad(mon.getMonth()+1)}`,l=tasks.filter(t=>mine(t)&&t.status==='SUBMITTED'&&t.submittedAt.startsWith(k));return `${nav(mon,'mon')}<div class="empty">${l.length} task${l.length==1?'':'s'} completed this month</div>${l.map(card).join('')}`},
+deadlines:()=>{const l=tasks.filter(t=>mine(t)&&t.status==='PENDING'),td=ymd(new Date()),wk=ymd(new Date(Date.now()+7*864e5)),dd=t=>t.due.slice(0,10);const g=[['Overdue',l.filter(late)],['Today',l.filter(t=>!late(t)&&dd(t)===td)],['This week',l.filter(t=>dd(t)>td&&dd(t)<=wk)],['Later',l.filter(t=>dd(t)>wk)]];return g.filter(x=>x[1].length).map(([n,a])=>`<h3>${n}</h3>${a.map(card).join('')}`).join('')||'<div class="empty">No upcoming deadlines 🎉</div>'},
+calendar:()=>{const f=new Date(cal.getFullYear(),cal.getMonth(),1),s=new Date(f);s.setDate(1-((f.getDay()+6)%7));let h=nav(cal,'cal')+'<div class="cal">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="dow">${d}</div>`).join('');for(let i=0;i<42;i++){const d=new Date(s);d.setDate(s.getDate()+i);const k=ymd(d),l=tasks.filter(t=>t.due.startsWith(k));h+=`<div class="cell ${d.getMonth()!==cal.getMonth()?'o':''} ${k===ymd(new Date())?'t':''} ${k===sel?'s':''}" data-day="${k}"><span>${d.getDate()}</span>${l.slice(0,2).map(t=>`<i class="chip ${t.priority} ${t.status}">${esc(t.title)}</i>`).join('')}${l.length>2?`<em>+${l.length-2}</em>`:''}</div>`}h+='</div>';return h+(sel?`<h3>Deadlines on ${sel}</h3>${tasks.filter(t=>t.due.startsWith(sel)).map(card).join('')||'<div class="empty">No deadlines this day.</div>'}`:'')},
+profile:()=>`<div class="panel pro">${av(me,'big')}<div><h2>${esc(me.name)}</h2><small>Member since ${me.joined}</small><div class="row" style="margin-top:8px"><button class="btn sm" data-photo>Change photo</button>${me.avatar?'<button class="btn sm ghost" data-rmphoto>Remove</button>':''}</div><input type="file" id="pic" accept="image/*" class="hidden"></div></div><form id="pf" class="panel grid"><h3 style="margin:0">Login details</h3><label>Full name<input name="name" value="${esc(me.name)}" required></label><label>Email<input name="email" type="email" value="${esc(me.email)}" required></label><label>Phone number<input name="phone" type="tel" value="${esc(me.phone||'')}"></label><label>Age<input name="age" type="number" min="1" max="120" value="${me.age??''}"></label><label>About you<textarea name="bio" rows="3">${esc(me.bio)}</textarea></label><label>Theme colour<input type="color" name="color" value="${me.color}"></label><button class="btn">Save changes</button></form><form id="pw" class="panel grid"><h3 style="margin:0">Password</h3>${me.hasPassword?'<input name="current" type="password" placeholder="Current password" required autocomplete="current-password">':''}<input name="new" type="password" minlength="6" placeholder="${me.hasPassword?'New password (leave blank to remove)':'Set a password (optional, min 6)'}" autocomplete="new-password"><button class="btn">${me.hasPassword?'Update password':'Save password'}</button></form><div class="panel"><div class="row" style="align-items:center"><h3 style="margin:0;flex:1">Linked devices</h3><button class="btn sm" data-code>Link a new device</button></div><div id="codebox"></div><div id="devs"><small>Loading…</small></div></div>`};
+function render(){$('#nav').innerHTML=NAV.map(([k,i,l])=>`<button data-p="${k}" class="${k===page?'on':''}">${i} ${l}</button>`).join('');$('#ttl').textContent=NAV.find(n=>n[0]===page)[2];$('#page').innerHTML=pages[page]();$('#uc').innerHTML=`${av(me)}<b>${esc(me.name)}</b>`;bell();if(page==='profile')loadDevs()}
+function bell(){const r=due();$('#bc').textContent=r.length;$('#bc').classList.toggle('hidden',!r.length);$('#drop').innerHTML=r.map(t=>`<div class="di" data-go="deadlines"><b>${esc(t.title)}</b><small>${late(t)?'Overdue':left(t)} · ${t.due.replace('T',' ')}</small></div>`).join('')||'<div class="di">No reminders right now</div>'}
+function toast(m,bad){const e=document.createElement('div');e.className='toast'+(bad?' bad':'');e.textContent=m;e.onclick=()=>{e.remove();go('deadlines')};$('#toasts').append(e);setTimeout(()=>e.remove(),12000)}
+function ping(){for(const t of due()){const k=t.id+(late(t)?'o':'s');if(shown.has(k))continue;shown.add(k);const m=(late(t)?'Overdue: ':'Due soon: ')+t.title;toast(m,late(t));if('Notification' in window&&Notification.permission==='granted')new Notification('Tasky',{body:m})}}
+async function load(draw=true){tasks=await api('/api/tasks');users=await api('/api/users');draw?render():bell()}
+function go(p){page=p;$('#drop').classList.add('hidden');render()}
+const devLabel=()=>{const u=navigator.userAgent,os=/Android/.test(u)?'Android':/iPhone|iPad/.test(u)?'iOS':/Windows/.test(u)?'Windows':/Mac/.test(u)?'Mac':/Linux/.test(u)?'Linux':'Device',b=/Edg\//.test(u)?'Edge':/Chrome\//.test(u)?'Chrome':/Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'Browser';return b+' on '+os};
+let lm='in';
+function loginForm(){document.querySelectorAll('#lt button').forEach(b=>b.classList.toggle('on',b.dataset.lt===lm));$('#lf').innerHTML=({in:`<input name="id" placeholder="Email, phone or name" required><input name="password" type="password" placeholder="Password (if you set one)" autocomplete="current-password"><button class="btn">Sign in</button>`,up:`<input name="name" placeholder="Full name" required><input name="email" type="email" placeholder="Email" required><input name="phone" type="tel" placeholder="Phone number" required><input name="age" type="number" min="1" max="120" placeholder="Age" required><input name="password" type="password" minlength="6" placeholder="Password (optional, min 6)" autocomplete="new-password"><button class="btn">Create account</button>`,code:`<small>On a device that is already signed in, open Profile → Linked devices → Link a new device, then enter the code here.</small><input name="code" inputmode="numeric" maxlength="6" placeholder="6-digit code" required><button class="btn">Link this device</button>`})[lm]}
+function loginShow(){$('#app').classList.add('hidden');$('#login').classList.remove('hidden');loginForm()}
+async function enter(p){try{me=await api('/api/login','POST',{...p,deviceId:dev,label:devLabel()});store.set('tasky_user',me.name);$('#login').classList.add('hidden');$('#app').classList.remove('hidden');if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();await load();ping()}catch(e){me=null;p.mode==='resume'?loginShow():alert(e.message)}}
+function logout(){store.del('tasky_user');me=null;loginShow()}
+async function loadDevs(){const el=$('#devs');if(!el)return;const d=await api('/api/devices');el.innerHTML=d.map(x=>`<div class="dev"><div><b>${esc(x.label)}</b>${x.id===dev?' <span class="pill ok">This device</span>':''}<small>Linked ${x.linked.slice(0,10)} · Last active ${x.seen.replace('T',' ').slice(0,16)}</small></div><button class="btn sm ghost" data-unlink="${x.id}">${x.id===dev?'Unlink &amp; sign out':'Unlink'}</button></div>`).join('')}
+document.addEventListener('change',e=>{if(e.target.id!=='pic'||!e.target.files[0])return;const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=async()=>{const c=document.createElement('canvas'),z=Math.min(im.width,im.height);c.width=c.height=160;c.getContext('2d').drawImage(im,(im.width-z)/2,(im.height-z)/2,z,z,0,0,160,160);try{me=await api('/api/me','PUT',{avatar:c.toDataURL('image/jpeg',.82)});toast('Photo updated');render()}catch(err){alert(err.message)}};im.src=fr.result};fr.readAsDataURL(e.target.files[0])});
+$('#lo').onclick=logout;
+$('#bb').onclick=()=>$('#drop').classList.toggle('hidden');$('#uc').onclick=()=>go('profile');
+document.addEventListener('click',async e=>{const t=e.target,q=s=>t.closest(s);let x;
+if(x=q('[data-p]'))go(x.dataset.p);else if(x=q('[data-go]'))go(x.dataset.go);
+else if(x=q('[data-sub]')){subId=x.dataset.sub;$('#mt').textContent=tasks.find(k=>k.id==subId).title;$('#mn').value='';$('#modal').classList.remove('hidden')}
+else if(x=q('[data-del]')){await api('/api/tasks/'+x.dataset.del,'DELETE');await load()}
+else if(x=q('[data-mv]')){const[k,n]=x.dataset.mv.split(':'),d=k==='mon'?mon:cal,nd=new Date(d.getFullYear(),d.getMonth()+ +n,1);k==='mon'?mon=nd:cal=nd;render()}
+else if(x=q('[data-day]')){sel=x.dataset.day;render()}
+else if(x=q('[data-lt]')){lm=x.dataset.lt;loginForm()}
+else if(x=q('[data-photo]'))$('#pic').click();
+else if(x=q('[data-rmphoto]')){me=await api('/api/me','PUT',{avatar:''});render()}
+else if(x=q('[data-code]')){const c=await api('/api/devices/code','POST');$('#codebox').innerHTML=`<div class="code">${c.code}</div><small>Enter this code on the other device under "Link code". Valid for ${c.minutes} minutes.</small>`}
+else if(x=q('[data-unlink]')){const id=x.dataset.unlink;await api('/api/devices/'+id,'DELETE');if(id===dev)logout();else loadDevs()}
+if(!q('.bellw'))$('#drop').classList.add('hidden')});
+$('#mc').onclick=()=>$('#modal').classList.add('hidden');
+$('#ms').onclick=async()=>{await api(`/api/tasks/${subId}/submit`,'POST',{note:$('#mn').value});$('#modal').classList.add('hidden');toast('Task submitted ✅');await load()};
+document.addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));try{
+if(e.target.id==='af'){await api('/api/tasks','POST',f);toast('Task assigned ✨');page='assign';await load()}
+if(e.target.id==='pf'){me=await api('/api/me','PUT',f);store.set('tasky_user',me.name);toast('Profile saved');await load()}
+if(e.target.id==='pw'){const had=me.hasPassword;await api('/api/password','PUT',{current:f.current||'',new:f.new||''});me.hasPassword=!!f.new;toast(f.new?'Password saved':had?'Password removed':'No password set');render()}
+if(e.target.id==='lf')await enter({...f,mode:lm})}catch(err){alert(err.message)}});
+setInterval(async()=>{if(me){try{await load(false);ping()}catch{}}},30000);
+const saved=store.get('tasky_user');saved?enter({mode:'resume',name:saved}):loginShow();
+</script></body></html>
